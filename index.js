@@ -48,7 +48,6 @@ async function run() {
         })
 
         // newUser
-
         app.post('/added-user', async (req, res) => {
             const body = req.body
             const result = await allUsers.insertOne(body)
