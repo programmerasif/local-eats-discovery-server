@@ -31,18 +31,17 @@ async function run() {
         const foodItems = client.db('local-eats-discovery-server').collection('items')
         const restaurants = client.db('local-eats-discovery-server').collection('restaurants')
         
-
        
 
         app.get('/items', async (req, res) => {
-            const cursor = foodItems.find()
+            const cursor = restaurants.find()
             const result = await cursor.toArray()
             res.send(result)
 
         })
         // all restaurants
         app.get('/all-restaurants', async (req, res) => {
-            const cursor = foodItems.find()
+            const cursor = restaurants.find()
             const result = await cursor.toArray()
             res.send(result)
 
