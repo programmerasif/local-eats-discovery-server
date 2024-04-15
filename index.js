@@ -30,7 +30,8 @@ async function run() {
         // await client.connect();
         const foodItems = client.db('local-eats-discovery-server').collection('items')
         const restaurants = client.db('local-eats-discovery-server').collection('restaurants')
-        
+        const allUsers = client.db('local-eats-discovery-server').collection('allUsers')
+
        
 
         app.get('/items', async (req, res) => {
@@ -44,8 +45,17 @@ async function run() {
             const cursor = restaurants.find()
             const result = await cursor.toArray()
             res.send(result)
-
         })
+
+        // newUser
+
+        app.post('/added-user', async (req, res) => {
+            const body = req.body
+            const result = await allUsers.insertOne(body)
+            res.send(result)
+        })
+
+
 
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
