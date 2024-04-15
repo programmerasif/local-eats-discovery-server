@@ -54,7 +54,16 @@ async function run() {
             res.send(result)
         })
 
+        // single restaruant access
+        app.get('/single-restaurants/:id', async (req, res) => {
+            const id = req.params.id;
+            
+            const quary = {_id : new ObjectId(id)}
+            const result = await restaurants.findOne(quary)
+           
+            res.send(result)
 
+        })
 
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
