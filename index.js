@@ -63,7 +63,7 @@ async function run() {
                 const quary= {email : body.email}
                 const isabilavle = await allUsers.findOne(quary)
                 if (isabilavle) {
-                    return res.send({message : 'already'})
+                    return res.send({message : 'Already have'})
                   }
                
             const result = await allUsers.insertOne(body)
@@ -115,8 +115,8 @@ async function run() {
           }
           })
 
-        //   single restarunt update**********************************************************
-        app.patch('/single-restaurant-update/:id', async (req, res) => {
+        //   single restarunt food item update**********************************************************
+        app.patch('/single-restaurant-item-update/:id', async (req, res) => {
             try {
               const id = req.params.id;
               const newItem = req.body; 
@@ -132,6 +132,36 @@ async function run() {
               res.status(500).send('Internal Server Error');
             }
           });
+
+
+          // identify the users**************************************************************************
+          app.get('/verify-admin/:email', async (req, res) => {
+
+            try{
+                const email = req.params.email;
+            console.log(email);
+                const quary = {email : email }
+                const result = await allUsers.findOne(quary)
+
+                if (result.role == 'admin' ) {
+                  res.send('admin')
+                }
+                if (result.role == 'owner' ) {
+                  res.send('owner')
+                }
+                else {
+                  res.send('user')
+                 }
+                
+            } catch (error) {
+                console.error('Error identify the admin:', error);
+                res.status(500).send('Internal Server Error');
+              }
+        })
+
+
+
+
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
