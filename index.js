@@ -55,7 +55,7 @@ async function run() {
         })
 
         // single restaruant access
-        app.get('/single-restaurants/:id', async (req, res) => {
+        app.get('/single-restaurant/:id', async (req, res) => {
             const id = req.params.id;
             
             const quary = {_id : new ObjectId(id)}
