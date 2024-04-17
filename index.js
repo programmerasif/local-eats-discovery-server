@@ -40,34 +40,98 @@ async function run() {
             res.send(result)
 
         })
-        // all restaurants
+        // all restaurants*******************************************************************
         app.get('/all-restaurants', async (req, res) => {
-            const cursor = restaurants.find()
-            const result = await cursor.toArray()
-            res.send(result)
+
+            try{ const cursor = restaurants.find()
+                const result = await cursor.toArray()
+                res.send(result)
+            }
+            catch (error) {
+                console.error('Error all-restaurants:', error);
+                res.status(500).send('Internal Server Error');
+              }
+            
 
         })
 
-        // newUser
-
+        // added-user**************************************************************************
         app.post('/added-user', async (req, res) => {
-            const body = req.body
+
+            try{ 
+                const body = req.body
+                const quary= {email : body.email}
+                const isabilavle = await allUsers.findOne(quary)
+                if (isabilavle) {
+                    return res.send({message : 'already'})
+                  }
+               
             const result = await allUsers.insertOne(body)
             res.send(result)
-
-        })
-
-        // single restaruant access
-        app.get('/single-restaurants/:id', async (req, res) => {
-            const id = req.params.id;
+            }
+            catch (error) {
+                console.error('Error added-user:', error);
+                res.status(500).send('Internal Server Error');
+              }
             
-            const quary = {_id : new ObjectId(id)}
-            const result = await restaurants.findOne(quary)
-           
-            res.send(result)
 
         })
 
+        // single restaruant access********************************************************
+        app.get('/single-restaurant/:id', async (req, res) => {
+
+            try{
+                const id = req.params.id;
+            
+                const quary = {_id : new ObjectId(id)}
+                const result = await restaurants.findOne(quary)
+               
+                res.send(result)
+            } catch (error) {
+                console.error('Error single restaruant access:', error);
+                res.status(500).send('Internal Server Error');
+              }
+        })
+
+        // user data update *************************************************************
+        app.patch('/user-update/:id',async(req,res) =>{
+            try{
+            const id = req.params.id;
+            const {name,email, phNumber,address} = req.body
+            const quary = {_id : new ObjectId(id)}
+            const updateDoc = {
+              $set: {
+                name,
+                email,
+                phNumber,
+                address
+              },
+            };
+            const result= await allUsers.updateOne(quary,updateDoc)
+            res.send(result)
+        }catch (error) {
+            console.error('Error user data update:', error);
+            res.status(500).send('Internal Server Error');
+          }
+          })
+
+        //   single restarunt update**********************************************************
+        app.patch('/single-restaurant-update/:id', async (req, res) => {
+            try {
+              const id = req.params.id;
+              const newItem = req.body; 
+          
+              const query = { _id: ObjectId(id) };
+              const update = { $push: { food_items: newItem } };
+          
+              const result = await allUsers.updateOne(query, update);
+          
+              res.send(result);
+            } catch (error) {
+              console.error('Error updating restaurant:', error);
+              res.status(500).send('Internal Server Error');
+            }
+          });
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
