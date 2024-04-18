@@ -135,7 +135,7 @@ async function run() {
 
 
           // identify the users**************************************************************************
-          app.get('/verify-admin/:email', async (req, res) => {
+          app.get('/verify-user/:email', async (req, res) => {
 
             try{
                 const email = req.params.email;
