@@ -115,6 +115,26 @@ async function run() {
           }
           })
 
+          // updated name ****************************************************************
+          app.patch('/name-update/:email',async(req,res) =>{
+            try{
+            const email = req.params.email;
+            const {name, phNumber} = req.body
+            const quary = {email : email}
+            const updateDoc = {
+              $set: {
+                name,
+                phNumber,
+              },
+            };
+            const result= await allUsers.updateOne(quary,updateDoc)
+            res.send(result)
+        }catch (error) {
+            console.error('Error user data update:', error);
+            res.status(500).send('Internal Server Error');
+          }
+          })
+
         //   single restarunt food item update**********************************************************
         app.patch('/single-restaurant-item-update/:id', async (req, res) => {
             try {
@@ -139,18 +159,16 @@ async function run() {
 
             try{
                 const email = req.params.email;
-            console.log(email);
                 const quary = {email : email }
                 const result = await allUsers.findOne(quary)
-
                 if (result.role == 'admin' ) {
-                  res.send('admin')
+                  res.send({ role:'admin'})
                 }
                 if (result.role == 'owner' ) {
-                  res.send('owner')
+                  res.send( { role:'owner'})
                 }
                 else {
-                  res.send('user')
+                  res.send( { role:'user'})
                  }
                 
             } catch (error) {
