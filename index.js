@@ -40,6 +40,14 @@ async function run() {
             res.send(result)
 
         })
+
+        // all user 
+        app.get('/get-users', async (req, res) => {
+          const cursor = allUsers.find()
+          const result = await cursor.toArray()
+          res.send(result)
+
+      })
         // all restaurants*******************************************************************
         app.get('/all-restaurants', async (req, res) => {
 
