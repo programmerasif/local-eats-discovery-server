@@ -63,7 +63,7 @@ async function run() {
                 const quary= {email : body.email}
                 const isabilavle = await allUsers.findOne(quary)
                 if (isabilavle) {
-                    return res.send({message : 'already'})
+                    return res.send({message : 'Already have'})
                   }
                
             const result = await allUsers.insertOne(body)
@@ -115,8 +115,28 @@ async function run() {
           }
           })
 
-        //   single restarunt update**********************************************************
-        app.patch('/single-restaurant-update/:id', async (req, res) => {
+          // updated name ****************************************************************
+          app.patch('/name-update/:email',async(req,res) =>{
+            try{
+            const email = req.params.email;
+            const {name, phNumber} = req.body
+            const quary = {email : email}
+            const updateDoc = {
+              $set: {
+                name,
+                phNumber,
+              },
+            };
+            const result= await allUsers.updateOne(quary,updateDoc)
+            res.send(result)
+        }catch (error) {
+            console.error('Error user data update:', error);
+            res.status(500).send('Internal Server Error');
+          }
+          })
+
+        //   single restarunt food item update**********************************************************
+        app.patch('/single-restaurant-item-update/:id', async (req, res) => {
             try {
               const id = req.params.id;
               const newItem = req.body; 
@@ -132,6 +152,34 @@ async function run() {
               res.status(500).send('Internal Server Error');
             }
           });
+
+
+          // identify the users**************************************************************************
+          app.get('/verify-user/:email', async (req, res) => {
+
+            try{
+                const email = req.params.email;
+                const quary = {email : email }
+                const result = await allUsers.findOne(quary)
+                if (result.role == 'admin' ) {
+                  res.send({ role:'admin'})
+                }
+                if (result.role == 'owner' ) {
+                  res.send( { role:'owner'})
+                }
+                else {
+                  res.send( { role:'user'})
+                 }
+                
+            } catch (error) {
+                console.error('Error identify the admin:', error);
+                res.status(500).send('Internal Server Error');
+              }
+        })
+
+
+
+
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
