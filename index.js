@@ -85,6 +85,23 @@ async function run() {
 
         })
 
+
+        app.get('/user/:id', async (req, res) => {
+          try {
+              const id = req.params.id;
+              const user = await allUsers.findOne({ _id: new ObjectId(id) });
+              if (user) {
+                  res.send(user);
+              } else {
+                  res.status(404).send({ message: 'User not found' });
+              }
+          } catch (error) {
+              console.error('Error retrieving user:', error);
+              res.status(500).send('Internal Server Error');
+          }
+      });
+
+
         // single restaruant access********************************************************
         app.get('/single-restaurant/:id', async (req, res) => {
 
@@ -149,7 +166,7 @@ async function run() {
               const id = req.params.id;
               const newItem = req.body; 
           
-              const query = { _id: ObjectId(id) };
+              const query = { _id: new ObjectId(id) };
               const update = { $push: { food_items: newItem } };
           
               const result = await allUsers.updateOne(query, update);
