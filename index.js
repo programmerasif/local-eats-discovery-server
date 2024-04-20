@@ -118,6 +118,31 @@ async function run() {
               }
         })
 
+        // add new restaurants*****************************************************************************
+        app.post('/added-new-restarunt', async (req, res) => {
+
+          try{ 
+              const body = req.body
+              const quary= {email : body.email}
+              const isabilavle = await restaurants.findOne(quary)
+              if (isabilavle) {
+                  return res.send({message : 'Already have'})
+                }
+             
+          const result = await allUsers.insertOne(body)
+          res.send(result)
+          }
+          catch (error) {
+              console.error('Error added-user:', error);
+              res.status(500).send('Internal Server Error');
+            }
+          
+
+      })
+
+
+
+      
         // user data update *************************************************************
         app.patch('/user-update/:id',async(req,res) =>{
             try{
@@ -161,7 +186,7 @@ async function run() {
           })
 
         //   single restarunt food item update**********************************************************
-        app.patch('/single-restaurant-item-update/:id', async (req, res) => {
+        app.put('/single-restaurant-item-update/:id', async (req, res) => {
             try {
               const id = req.params.id;
               const newItem = req.body; 
