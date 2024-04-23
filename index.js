@@ -31,6 +31,7 @@ async function run() {
         const foodItems = client.db('local-eats-discovery-server').collection('items')
         const restaurants = client.db('local-eats-discovery-server').collection('restaurants')
         const allUsers = client.db('local-eats-discovery-server').collection('allUsers')
+        const reviewsCollection = client.db('local-eats-discovery-server').collection('reviews')
 
        
 
@@ -50,7 +51,6 @@ async function run() {
       })
         // all restaurants*******************************************************************
         app.get('/all-restaurants', async (req, res) => {
-
             try{ const cursor = restaurants.find()
                 const result = await cursor.toArray()
                 res.send(result)
@@ -58,9 +58,7 @@ async function run() {
             catch (error) {
                 console.error('Error all-restaurants:', error);
                 res.status(500).send('Internal Server Error');
-              }
-            
-
+              }            
         })
 
         // added-user**************************************************************************
@@ -118,18 +116,19 @@ async function run() {
               }
         })
 
+
         // add new restaurants*****************************************************************************
         app.post('/added-new-restarunt', async (req, res) => {
 
           try{ 
               const body = req.body
-              const quary= {email : body.email}
+              const quary= {ownerEmail : body.ownerEmail}
               const isabilavle = await restaurants.findOne(quary)
               if (isabilavle) {
                   return res.send({message : 'Already have'})
                 }
              
-          const result = await allUsers.insertOne(body)
+          const result = await restaurants.insertOne(body)
           res.send(result)
           }
           catch (error) {
@@ -142,29 +141,74 @@ async function run() {
 
 
 
+      app.patch('/update-restarunt/:id', async (req, res) => {
+        try {
+          const id = req.params.id; 
+          const { restaurant_name, place_name, name, ratings, email, uid, ownerEmail, 
+            opening_time, image, phoneNumber, location } = req.body; 
+      
+          const { latitude, longitude } = location;
+      
+          const query = { uid: id };
+          const updateDoc = {
+            $set: { 
+              name,
+              restaurant_name,
+              place_name,
+              ratings,
+              email,
+              uid,
+              ownerEmail,
+              opening_time,
+              image,
+              phoneNumber,
+              location: {
+                latitude,
+                longitude,
+              },
+            },
+          };
+          
+          const result = await restaurants.updateOne(query, updateDoc);
+          res.send(result);
+        } catch (error) {
+          console.error('Error updating restaurant data:', error);
+          res.status(500).send('Internal Server Error'); 
+        }
+      });
+
+
       
         // user data update *************************************************************
-        app.patch('/user-update/:id',async(req,res) =>{
-            try{
+        app.patch('/user-update/:id', async (req, res) => {
+          try {
             const id = req.params.id;
-            const {name,email, phNumber,address} = req.body
-            const quary = {_id : new ObjectId(id)}
+            const { name, email, phNumber, place_name, location } = req.body;
+        
+            const { latitude, longitude, address } = location;
+        
+            const query = { uid: id };
             const updateDoc = {
               $set: {
                 name,
                 email,
                 phNumber,
-                address
+                place_name,
+                location: {
+                  latitude,
+                  longitude,
+                  address,
+                },
               },
             };
-            const result= await allUsers.updateOne(quary,updateDoc)
-            res.send(result)
-        }catch (error) {
+            const result = await allUsers.updateOne(query, updateDoc);
+            res.send(result);
+          } catch (error) {
             console.error('Error user data update:', error);
             res.status(500).send('Internal Server Error');
           }
-          })
-
+        });
+        
           // updated name ****************************************************************
           app.patch('/name-update/:email',async(req,res) =>{
             try{
@@ -186,24 +230,44 @@ async function run() {
           })
 
         //   single restarunt food item update**********************************************************
-        app.put('/single-restaurant-item-update/:id', async (req, res) => {
-            try {
-              const id = req.params.id;
-              const newItem = req.body; 
+        // app.put('/single-restaurant-item-update/:id', async (req, res) => {
+        //     try {
+        //       const id = req.params.id;
+        //       const newItem = req.body; 
           
-              const query = { _id: new ObjectId(id) };
-              const update = { $push: { food_items: newItem } };
+        //       console.log(id);
+        //       const query = { _id: new ObjectId(id) };
+        //       const update = { $push: { food_items: newItem } };
           
-              const result = await allUsers.updateOne(query, update);
+        //       const result = await allUsers.updateOne(query, update);
           
-              res.send(result);
-            } catch (error) {
-              console.error('Error updating restaurant:', error);
-              res.status(500).send('Internal Server Error');
-            }
-          });
+        //       res.send(result);
+        //     } catch (error) {
+        //       console.error('Error updating restaurant:', error);
+        //       res.status(500).send('Internal Server Error');
+        //     }
+        //   });
 
-
+    app.put('/single-restaurant-item-update/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+      
+        const newItem = req.body; 
+    
+        // Update the query to match the uid field
+        const query = { uid: id };
+        const update = { $push: { food_items: newItem } };
+    
+        const result = await restaurants.updateOne(query, update);
+    
+        res.send(result);
+      } catch (error) {
+        console.error('Error updating restaurant:', error);
+        res.status(500).send('Internal Server Error');
+      }
+    });
+        
+        
           // identify the users**************************************************************************
           app.get('/verify-user/:email', async (req, res) => {
 
@@ -227,6 +291,44 @@ async function run() {
               }
         })
 
+
+        // **** For review 
+
+      app.post('/review', async(req, res) => {
+        try{ 
+
+          const { rating, comment, email, uid, uniqueId, image, name } = req.body;
+
+          const review = {
+            rating,
+            comment,
+            email,
+            uid,
+            uniqueId,
+            image,
+            name
+          }
+          const result = await reviewsCollection.insertOne(review)
+          res.send(result)
+        }catch (error) {
+          console.error('Error added-user:', error);
+          res.status(500).send('Internal Server Error');
+        }
+
+      })
+
+
+      app.get('/reviews', async (req, res) => {
+        
+        try {
+          const cursor = reviewsCollection.find();
+          const reviews = await cursor.toArray();
+          res.json(reviews);
+        } catch (error) {
+          console.error('Error fetching reviews:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
 
 
 
