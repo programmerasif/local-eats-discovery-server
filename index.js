@@ -229,25 +229,6 @@ async function run() {
           }
           })
 
-        //   single restarunt food item update**********************************************************
-        // app.put('/single-restaurant-item-update/:id', async (req, res) => {
-        //     try {
-        //       const id = req.params.id;
-        //       const newItem = req.body; 
-          
-        //       console.log(id);
-        //       const query = { _id: new ObjectId(id) };
-        //       const update = { $push: { food_items: newItem } };
-          
-        //       const result = await allUsers.updateOne(query, update);
-          
-        //       res.send(result);
-        //     } catch (error) {
-        //       console.error('Error updating restaurant:', error);
-        //       res.status(500).send('Internal Server Error');
-        //     }
-        //   });
-
     app.put('/single-restaurant-item-update/:id', async (req, res) => {
       try {
         const id = req.params.id;
