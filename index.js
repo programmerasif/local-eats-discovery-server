@@ -106,13 +106,13 @@ async function run() {
 
           try{ 
               const body = req.body
-              const quary= {email : body.email}
+              const quary= {ownerEmail : body.ownerEmail}
               const isabilavle = await restaurants.findOne(quary)
               if (isabilavle) {
                   return res.send({message : 'Already have'})
                 }
              
-          const result = await allUsers.insertOne(body)
+          const result = await restaurants.insertOne(body)
           res.send(result)
           }
           catch (error) {
@@ -125,7 +125,7 @@ async function run() {
 
 
 
-      
+
         // user data update *************************************************************
         app.patch('/user-update/:id',async(req,res) =>{
             try{
