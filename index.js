@@ -145,7 +145,7 @@ async function run() {
         try {
           const id = req.params.id; 
           const { restaurant_name, place_name, name, ratings, email, uid, ownerEmail, 
-            opening_time, image, phoneNumber, location } = req.body; 
+            opening_time, image, restaurant_img, phoneNumber, location } = req.body; 
       
           const { latitude, longitude } = location;
       
@@ -158,6 +158,7 @@ async function run() {
               ratings,
               email,
               uid,
+              restaurant_img,
               ownerEmail,
               opening_time,
               image,
