@@ -173,10 +173,10 @@ async function run() {
               ratings,
               email,
               uid,
-              restaurant_img,
               ownerEmail,
               opening_time,
               image,
+              restaurant_img,
               phoneNumber,
               location: {
                 latitude,
