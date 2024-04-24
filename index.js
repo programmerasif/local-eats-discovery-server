@@ -49,6 +49,21 @@ async function run() {
           res.send(result)
 
       })
+
+      
+
+    app.patch('/get-users/:id',async(req,res) =>{
+      const id = req.params.id;
+      const {role} = req.body
+      const quary = {_id : new ObjectId(id)}
+      const updateDoc = {
+        $set: {
+          role : role
+        },
+      };
+      const result= await allUsers.updateOne(quary,updateDoc)
+      res.send(result)
+    })
         // all restaurants*******************************************************************
         app.get('/all-restaurants', async (req, res) => {
             try{ const cursor = restaurants.find()
