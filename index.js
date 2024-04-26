@@ -79,6 +79,7 @@ async function run() {
         // added-user**************************************************************************
         app.post('/added-user', async (req, res) => {
 
+          console.log(req.body);
             try{ 
                 const body = req.body
                 const quary= {email : body.email}
@@ -160,7 +161,7 @@ async function run() {
         try {
           const id = req.params.id; 
           const { restaurant_name, place_name, name, ratings, email, uid, ownerEmail, 
-            opening_time, image, restaurant_img, phoneNumber, location } = req.body; 
+            opening_time, image, restaurant_img,website, phoneNumber, location } = req.body; 
       
           const { latitude, longitude } = location;
       
@@ -174,6 +175,7 @@ async function run() {
               email,
               uid,
               restaurant_img,
+              website,
               ownerEmail,
               opening_time,
               image,
