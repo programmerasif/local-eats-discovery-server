@@ -201,7 +201,7 @@ async function run() {
         app.patch('/user-update/:id', async (req, res) => {
           try {
             const id = req.params.id;
-            const { name, email, phNumber, place_name, location } = req.body;
+            const { name, email, phNumber, place_name, image, location } = req.body;
         
             const { latitude, longitude, address } = location;
         
@@ -211,6 +211,7 @@ async function run() {
                 name,
                 email,
                 phNumber,
+                image,
                 place_name,
                 location: {
                   latitude,
